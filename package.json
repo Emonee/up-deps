@@ -1,15 +1,19 @@
 {
   "name": "up-deps",
-  "version": "0.2.0",
-  "description": "An utility for check and update you app dependencies.",
+  "version": "0.2.1",
+  "description": "An utility for check and update your app dependencies.",
   "main": "index.js",
   "bin": "./bin/up-deps",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "test": "echo 'test'"
   },
   "repository": {
     "type": "git",
-    "url": "nods"
+    "url": "https://github.com/Emonee/up-deps"
   },
   "keywords": [
     "dependencies"
@@ -17,7 +21,7 @@
   "author": "Emiliano Acevedo",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/monatheoctocat/my_package/issues"
+    "url": "https://github.com/Emonee/up-deps/issues"
   },
-  "homepage": "https://github.com/monatheoctocat/my_package"
+  "homepage": "https://github.com/Emonee/up-deps"
 }
