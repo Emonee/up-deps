@@ -1,9 +1,9 @@
 {
   "name": "up-deps",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "An utility for check and update your app dependencies.",
   "main": "index.js",
-  "bin": "./bin/up-deps",
+  "bin": "./bin/up-deps.js",
   "type": "module",
   "engines": {
     "node": ">=18"
