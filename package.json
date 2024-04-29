@@ -1,6 +1,6 @@
 {
   "name": "up-deps",
-  "version": "1.0.0-canary-1",
+  "version": "1.0.0-canary-2",
   "description": "An utility for check and update your app dependencies.",
   "main": "index.js",
   "bin": "./bin/up-deps.js",
