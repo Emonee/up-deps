@@ -4,13 +4,19 @@ import { exec } from 'node:child_process'
 
 const dependencies = {}
 const devDependencies = {}
-const { stdout: dependenciesJsonString } = await execAsnc('npm list --json --omit=dev')
-const { stdout: allDependenciesJsonString } = await execAsnc('npm list --json')
-for (const packageModule in JSON.parse(dependenciesJsonString).dependencies)
-  dependencies[packageModule] = JSON.parse(dependenciesJsonString).dependencies[packageModule].version
-for (const packageModule in JSON.parse(allDependenciesJsonString).dependencies) {
-  if (dependencies[packageModule]) continue
-  devDependencies[packageModule] = JSON.parse(allDependenciesJsonString).dependencies[packageModule].version
+try {
+  const { stdout: dependenciesJsonString } = await execAsnc('npm list --json --omit=dev')
+  const { stdout: allDependenciesJsonString } = await execAsnc('npm list --json')
+  for (const packageModule in JSON.parse(dependenciesJsonString).dependencies)
+    dependencies[packageModule] = JSON.parse(dependenciesJsonString).dependencies[packageModule].version
+  for (const packageModule in JSON.parse(allDependenciesJsonString).dependencies) {
+    if (dependencies[packageModule]) continue
+    devDependencies[packageModule] = JSON.parse(allDependenciesJsonString).dependencies[packageModule].version
+  }
+} catch (error) {
+  console.error('❌ Error while reading dependencies.You probably have a discrepancy between your package.json and your node_modules folder. Please run `npm install` and try again.')
+  process.exitCode = 1
+  process.exit()  
 }
 const positiveAnswers = ['yes', 'y']
 const versionTypes = {
@@ -27,6 +33,7 @@ await checkVersions(devDependencies, true)
  * @param { boolean } isDev
  */
 async function checkVersions (dependenciesObject, isDev = false) {
+  console.log(`🔍 Checking ${isDev ? 'devDependencies' : 'dependencies'} versions...`)
   const depEntries = Object.entries(dependenciesObject)
   const res = await Promise.all(depEntries.map(checkDepVersion))
   const oldPackages = res
@@ -36,7 +43,7 @@ async function checkVersions (dependenciesObject, isDev = false) {
     console.log(`🔻 ${dep} is out of date: 🔻
     ${actualizationType({ actualVersion, latestVersion }).label} / ${actualVersion} => ${latestVersion}`)
   }
-  const updatePachages = await questionUserBoolean('Do you wich to update the packages? (yes/no): ')
+  const updatePachages = await questionUserBoolean('Do you wich to update these packages? (yes/no): ')
   if (!updatePachages) return
   await updateDeps(oldPackages, isDev)
 }
@@ -52,6 +59,7 @@ async function updateDeps (deps, isDev = false) {
       actualizationType({ actualVersion, latestVersion }).symbol !== versionTypes.MAJOR.symbol)
   }
   if (deps.length < 1) return
+  console.log(`🔄 Updating packages...`)
   const mappedDeps = deps.map(({ dep }) => `${dep}@latest`).join(' ')
   let command = `npm install ${mappedDeps} -E`
   if (isDev) command += ' -D'
